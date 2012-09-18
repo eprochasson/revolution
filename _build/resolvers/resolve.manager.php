@@ -8,7 +8,7 @@ switch (MODX_SETUP_KEY) {
         if ($cacheManager= $transport->xpdo->getCacheManager()) {
             if ($targetFile= @ eval($fileMeta['target'])) {
                 $configContent= "<?php\n"
-                    . "define('MODX_CORE_PATH', dirname(__FILE__).'/core/');\n"
+                    . "define('MODX_CORE_PATH', dirname(dirname(__FILE__)).'/core/');\n"
                     . "define('MODX_CONFIG_KEY', '" . MODX_CONFIG_KEY . "');\n"
                     . "?>";
                 $written= $cacheManager->writeFile($targetFile, $configContent);

@@ -570,7 +570,7 @@ $attributes['resolve'][] = array (
 );
 $attributes['resolve'][] = array (
     'type' => 'php',
-    'source' => MODX_BUILD_DIR . 'resolvers/resolve.core.php',
+    'source' => MODX_BUILD_DIR . 'resolvers/resolve.manager.php',
     'target' => "return MODX_MANAGER_PATH . 'config.core.php';",
 );
 $package->put($c, $attributes);
@@ -632,7 +632,7 @@ $fileset = array (
 );
 $attributes['resolve'][] = array (
     'type' => 'php',
-    'source' => MODX_BUILD_DIR . 'resolvers/resolve.core.php',
+    'source' => MODX_BUILD_DIR . 'resolvers/resolve.connectors.php',
     'target' => "return MODX_CONNECTORS_PATH . 'config.core.php';",
 );
 $attributes['resolve'][] = array (
