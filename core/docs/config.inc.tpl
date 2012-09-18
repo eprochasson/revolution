@@ -20,31 +20,32 @@ $https_port = '{https_port}';
 $uuid = '{uuid}';
 
 if (!defined('MODX_CORE_PATH')) {
-    $modx_core_path= '{core_path}';
+$modx_core_path= dirname(dirname(__FILE__)).'/';
     define('MODX_CORE_PATH', $modx_core_path);
 }
 if (!defined('MODX_PROCESSORS_PATH')) {
-    $modx_processors_path= '{processors_path}';
+    $modx_processors_path= MODX_CORE_PATH.'model/modx/processors/';
     define('MODX_PROCESSORS_PATH', $modx_processors_path);
 }
-if (!defined('MODX_CONNECTORS_PATH')) {
-    $modx_connectors_path= '{connectors_path}';
-    $modx_connectors_url= '{connectors_url}';
-    define('MODX_CONNECTORS_PATH', $modx_connectors_path);
-    define('MODX_CONNECTORS_URL', $modx_connectors_url);
-}
-if (!defined('MODX_MANAGER_PATH')) {
-    $modx_manager_path= '{mgr_path}';
-    $modx_manager_url= '{mgr_url}';
-    define('MODX_MANAGER_PATH', $modx_manager_path);
-    define('MODX_MANAGER_URL', $modx_manager_url);
-}
 if (!defined('MODX_BASE_PATH')) {
-    $modx_base_path= '{web_path}';
+    $modx_base_path= dirname(dirname(dirname(__FILE__))).'/';
     $modx_base_url= '{web_url}';
     define('MODX_BASE_PATH', $modx_base_path);
     define('MODX_BASE_URL', $modx_base_url);
 }
+if (!defined('MODX_CONNECTORS_PATH')) {
+    $modx_connectors_path= MODX_BASE_PATH.'connectors/';
+    $modx_connectors_url= MODX_BASE_URL.'connectors/';
+    define('MODX_CONNECTORS_PATH', $modx_connectors_path);
+    define('MODX_CONNECTORS_URL', $modx_connectors_url);
+}
+if (!defined('MODX_MANAGER_PATH')) {
+    $modx_manager_path= MODX_BASE_PATH.'manager/';
+    $modx_manager_url= MODX_BASE_URL.'manager/';
+    define('MODX_MANAGER_PATH', $modx_manager_path);
+    define('MODX_MANAGER_URL', $modx_manager_url);
+}
+
 if(defined('PHP_SAPI') && (PHP_SAPI == "cli" || PHP_SAPI == "embed")) {
     $isSecureRequest = false;
 } else {
@@ -72,8 +73,8 @@ if (!defined('MODX_SITE_URL')) {
     define('MODX_SITE_URL', $site_url);
 }
 if (!defined('MODX_ASSETS_PATH')) {
-    $modx_assets_path= '{assets_path}';
-    $modx_assets_url= '{assets_url}';
+    $modx_assets_path= MODX_BASE_PATH .'/assets/';
+    $modx_assets_url= MODX_BASE_URL.'/assets/';
     define('MODX_ASSETS_PATH', $modx_assets_path);
     define('MODX_ASSETS_URL', $modx_assets_url);
 }
