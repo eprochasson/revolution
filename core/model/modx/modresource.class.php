@@ -5,7 +5,7 @@
 /**
  * Interface for implementation on derivative Resource types. Please define the following methods in your derivative
  * class to properly implement a Custom Resource Type in MODX.
- * 
+ *
  * @see modResource
  * @interface
  * @package modx
@@ -13,7 +13,7 @@
 interface modResourceInterface {
     /**
      * Determine the controller path for this Resource class. Return an absolute path.
-     * 
+     *
      * @static
      * @param xPDO $modx A reference to the modX object
      * @return string The absolute path to the controller for this Resource class
@@ -168,13 +168,13 @@ class modResource extends modAccessibleSimpleObject implements modResourceInterf
      * @var boolean
      */
     public $allowChildrenResources = true;
-    
+
     /** @var modX $xpdo */
     public $xpdo;
 
     /**
      * Get a sortable, limitable collection (and total count) of Resource Groups for a given Resource.
-     * 
+     *
      * @static
      * @param modResource &$resource A reference to the modResource to get the groups from.
      * @param array $sort An array of sort columns in column => direction format.
@@ -412,7 +412,7 @@ class modResource extends modAccessibleSimpleObject implements modResourceInterf
      * {@inheritdoc}
      *
      * Additional logic added for the following fields:
-     * 	-alias: Applies {@link modResource::cleanAlias()}
+     *     -alias: Applies {@link modResource::cleanAlias()}
      *  -contentType: Calls {@link modResource::addOne()} to sync contentType
      *  -content_type: Sets the contentType field appropriately
      */
@@ -739,12 +739,12 @@ class modResource extends modAccessibleSimpleObject implements modResourceInterf
                 $policyTable = $this->xpdo->getTableName('modAccessPolicy');
                 $resourceGroupTable = $this->xpdo->getTableName('modResourceGroupResource');
                 $sql = "SELECT Acl.target, Acl.principal, Acl.authority, Acl.policy, Policy.data FROM {$accessTable} Acl " .
-                        "LEFT JOIN {$policyTable} Policy ON Policy.id = Acl.policy " .
-                        "JOIN {$resourceGroupTable} ResourceGroup ON Acl.principal_class = 'modUserGroup' " .
-                        "AND (Acl.context_key = :context OR Acl.context_key IS NULL OR Acl.context_key = '') " .
-                        "AND ResourceGroup.document = :resource " .
-                        "AND ResourceGroup.document_group = Acl.target " .
-                        "GROUP BY Acl.target, Acl.principal, Acl.authority, Acl.policy";
+                    "LEFT JOIN {$policyTable} Policy ON Policy.id = Acl.policy " .
+                    "JOIN {$resourceGroupTable} ResourceGroup ON Acl.principal_class = 'modUserGroup' " .
+                    "AND (Acl.context_key = :context OR Acl.context_key IS NULL OR Acl.context_key = '') " .
+                    "AND ResourceGroup.document = :resource " .
+                    "AND ResourceGroup.document_group = Acl.target " .
+                    "GROUP BY Acl.target, Acl.principal, Acl.authority, Acl.policy";
                 $bindings = array(
                     ':resource' => $this->get('id'),
                     ':context' => $context
@@ -806,7 +806,7 @@ class modResource extends modAccessibleSimpleObject implements modResourceInterf
 
     /**
      * Sets a value for a TV for this Resource
-     * 
+     *
      * @param mixed $pk The TV name or ID to set
      * @param string $value The value to set for the TV
      * @return bool Whether or not the TV saved successfully
@@ -971,24 +971,31 @@ class modResource extends modAccessibleSimpleObject implements modResourceInterf
         $newResource->set('editedby',0);
         $newResource->set('editedon',0);
 
+        $preserve_alias = $this->xpdo->getOption('preserve_alias', $options, false);
+
         /* get new alias */
         $alias = $newResource->cleanAlias($newName);
         if ($this->xpdo->getOption('friendly_urls', $options, false)) {
-            /* auto assign alias */
-            $aliasPath = $newResource->getAliasPath($newName);
-            $dupeContext = $this->xpdo->getOption('global_duplicate_uri_check', $options, false) ? '' : $newResource->get('context_key');
-            if ($newResource->isDuplicateAlias($aliasPath, $dupeContext)) {
-                $alias = '';
-                if ($newResource->get('uri_override')) {
-                    $newResource->set('uri_override', false);
+            if(!($preserve_alias)){
+                /* auto assign alias */
+                $aliasPath = $newResource->getAliasPath($newName);
+                $dupeContext = $this->xpdo->getOption('global_duplicate_uri_check', $options, false) ? '' : $newResource->get('context_key');
+                if ($newResource->isDuplicateAlias($aliasPath, $dupeContext)) {
+                    $alias = '';
+                    if ($newResource->get('uri_override')) {
+                        $newResource->set('uri_override', false);
+                    }
                 }
+                $newResource->set('alias',$alias);
             }
         }
-        $newResource->set('alias',$alias);
 
+        $preserve_menuindex = $this->xpdo->getOption('preserve_menuindex', $options, false);
         /* set new menuindex */
-        $childrenCount = $this->xpdo->getCount('modResource',array('parent' => $this->get('parent')));
-        $newResource->set('menuindex',$childrenCount);
+        if(!$preserve_menuindex){
+            $menuindex = $this->xpdo->getCount('modResource',array('parent' => $this->get('parent')));
+            $newResource->set('menuindex',$menuindex);
+        }
 
         /* save resource */
         if (!$newResource->save()) {
@@ -1020,7 +1027,7 @@ class modResource extends modAccessibleSimpleObject implements modResourceInterf
         $duplicateChildren = isset($options['duplicateChildren']) ? $options['duplicateChildren'] : true;
         if ($duplicateChildren) {
             if (!$this->checkPolicy('add_children')) return $newResource;
-            
+
             $children = $this->getMany('Children');
             if (is_array($children) && count($children) > 0) {
                 /** @var modResource $child */
@@ -1031,6 +1038,8 @@ class modResource extends modAccessibleSimpleObject implements modResourceInterf
                         'prefixDuplicate' => $prefixDuplicate,
                         'overrides' => !empty($options['overrides']) ? $options['overrides'] : false,
                         'publishedMode' => $publishedMode,
+                        'preserve_alias' => $preserve_alias,
+                        'preserve_menuindex' => $preserve_menuindex
                     ));
                 }
             }
