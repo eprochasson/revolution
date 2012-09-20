@@ -907,6 +907,20 @@ MODx.window.DuplicateContext = function(config) {
             ,name: 'newkey'
             ,anchor: '100%'
             ,value: ''
+        },{
+            xtype: 'checkbox'
+            ,id: 'modx-'+this.ident+'-preservealias'
+            ,fieldLabel: _('preserve_alias')
+            ,name: 'preserve_alias'
+            ,anchor: '100%'
+            ,checked: true
+        },{
+            xtype: 'checkbox',
+            id: 'modx-'+this.ident+'-preservemenuindex'
+            ,fieldLabel: _('preserve_menuindex')
+            ,name: 'preserve_menuindex'
+            ,anchor: '100%'
+            ,checked: true
         }]
     });
     MODx.window.DuplicateContext.superclass.constructor.call(this,config);
